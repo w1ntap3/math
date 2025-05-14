@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Group Task Selector</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/@popmotion/popmotion@8.7.4/dist/popmotion.global.min.js"></script>
+  <script defer>
+    const groups = [
+      { name: "Group 1", members: ["Polad", "Zahra", "Suleyman", "Melissa"], score: 0 },
+      { name: "Group 2", members: ["Javid", "Mikayil", "Rana", "Malak"], score: 0 },
+      { name: "Group 3", members: ["Fatima", "Kanan", "Lamiya", "Jala"], score: 0 },
+      { name: "Group 4", members: ["Sima", "Akbar", "Chingiz", "Narmin"], score: 0 },
+      { name: "Group 5", members: ["David", "Ilayda", "Eldar", "Davud"], score: 0 }
+    ];
+
+    let remainingGroups = [];
+    let currentGroup = null;
+
+    function animateText(text) {
+      const display = document.getElementById("groupDisplay");
+      display.style.opacity = 0;
+      setTimeout(() => {
+        display.textContent = text;
+        display.style.opacity = 1;
+      }, 300);
+    }
+
+    function startRound() {
+      remainingGroups = [...groups];
+      currentGroup = null;
+      animateText("Click 'Next Group' to begin the round.");
+      updateScores();
+    }
+
+    function nextGroup() {
+      if (remainingGroups.length === 0) {
+        animateText("All groups have had their turn this round.");
+        return;
+      }
+
+      const index = Math.floor(Math.random() * remainingGroups.length);
+      currentGroup = remainingGroups.splice(index, 1)[0];
+      animateText(`${currentGroup.name} (${currentGroup.members.join(", ")})`);
+    }
+
+    function updateScores() {
+      const scoreList = document.getElementById("scoreList");
+      scoreList.innerHTML = "";
+      groups.forEach(group => {
+        const li = document.createElement("li");
+        li.textContent = `${group.name}: ${group.score} pts`;
+        li.classList.add("text-5xl", "text-white", "transition", "duration-300", "hover:scale-105");
+        scoreList.appendChild(li);
+      });
+    }
+
+    function modifyScore(change) {
+      if (!currentGroup) return;
+      currentGroup.score += change;
+      updateScores();
+      currentGroup = null;
+      animateText("Click 'Next Group' for the next turn.");
+    }
+  </script>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white w-full h-screen m-0 p-0">
+  <div class="w-full h-full flex flex-col justify-center items-center p-10">
+    <h1 class="text-6xl font-bold mb-12 animate-pulse">Group Task Selector</h1>
+    <div class="flex flex-col lg:flex-row justify-center items-center gap-6 mb-10">
+      <button onclick="startRound()" class="bg-blue-600 hover:bg-blue-700 text-white text-3xl px-8 py-5 rounded-xl transition-transform transform hover:scale-105">Start New Round</button>
+      <button onclick="nextGroup()" class="bg-green-600 hover:bg-green-700 text-white text-3xl px-8 py-5 rounded-xl transition-transform transform hover:scale-105">Next Group</button>
+    </div>
+    <div class="text-5xl font-semibold mb-12 text-center transition-opacity duration-500" id="groupDisplay">Click 'Start New Round' to begin.</div>
+    <div class="flex justify-center gap-10 mb-14 flex-wrap">
+      <button onclick="modifyScore(1)" class="bg-green-700 hover:bg-green-800 text-white text-3xl px-8 py-5 rounded-xl transition-transform transform hover:scale-105">+1 Point</button>
+      <button onclick="modifyScore(0)" class="bg-gray-600 hover:bg-gray-700 text-white text-3xl px-8 py-5 rounded-xl transition-transform transform hover:scale-105">No Change</button>
+      <button onclick="modifyScore(-1)" class="bg-red-700 hover:bg-red-800 text-white text-3xl px-8 py-5 rounded-xl transition-transform transform hover:scale-105">-1 Point</button>
+    </div>
+    <div class="w-full max-w-4xl">
+      <h2 class="text-4xl font-bold mb-6 text-center">Scores</h2>
+      <ul id="scoreList" class="list-disc pl-10 space-y-6"></ul>
+    </div>
+  </div>
+</body>
+</html>
